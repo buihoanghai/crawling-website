@@ -98,7 +98,17 @@ const getYYYYMMDD = ()=>{
 
     return `${year}-${month}-${day}`;
 };
-
+async function updateCSVFile(file, csvContent) {
+    return new Promise(resolve => {
+        fs.appendFile(file, csvContent, 'utf8', function (err) {
+            if (err) {
+                console.log('Some error occured - file either not saved or corrupted file saved.');
+            } else {
+            }
+            resolve();
+        });
+    });
+}
 const getDataFromJSON = (jsonPath)=>{
     return require(jsonPath);
 };
@@ -113,7 +123,8 @@ const revealed = {
     getDataFromCSV,
     regexMatching,
     regexMatchingSync,
-    executeAsync
+    executeAsync,
+    updateCSVFile,
 };
 
 module.exports = revealed;
