@@ -1,8 +1,8 @@
 const utils = require("./utils");
 const db = require("./sqlite3");
 const request = require('request');
-const BASE_URL = "https://iprice.my/";
-const START_URL = "https://iprice.my";
+const BASE_URL = "https://iprice-my.iprice.mx/";
+const START_URL = "https://iprice-my.iprice.mx";
 const QUEUE = 5;
 let deep = 1;
 let crawledURLs = [];
@@ -96,12 +96,12 @@ const crawlMulti = async (URLs, foundedURLs) => {
     URLs.map(url => addConvertTask(async () => {
         if (url.length > 5) {
             const urls = await crawlSingle(url, deep);
+            result = [...result, ...urls];
             i++;
             if (i % (1000) === 0 || i === URLs.length) {
                 console.log(`level ${deep}: founded ${result.length} out link, ${i}/${URLs.length}`);
                 await updateDataToCSV();
             }
-            result = [...result, ...urls];
         }
     }));
     await utils.executeTasks(crawlTasks, {thread: QUEUE});
