@@ -1,9 +1,9 @@
 const utils = require("./utils");
 const db = require("./sqlite3");
 const request = require('request');
-const BASE_URL = "https://iprice-my.iprice.mx/";
-const START_URL = "https://iprice-my.iprice.mx";
-const QUEUE = 5;
+const BASE_URL = "https://iprice.my/";
+const START_URL = "https://iprice.my";
+const QUEUE = 50;
 let deep = 1;
 let crawledURLs = [];
 let outLinkURLs = [];
@@ -36,6 +36,7 @@ const warmUpData = async () => {
     previousFoundedURLs.map((item) => {
         foundedURLs.push([item]);
     });
+    deep = previousCrawlingURLs[0] ? previousCrawlingURLs[0][2] : previousCrawlingURLs[1][2];
     previousCrawlingURLs.map((item) => {
         // console.log(item[1]);
         if (item[1] === 'crawling') { //crawling status
@@ -43,7 +44,6 @@ const warmUpData = async () => {
         }
         if (item[4] === 'crawled') {
             utils.removeItem(crawlingURLs, item[0]);
-            deep = item[5];
         }
     });
     console.log("foundedURLs", foundedURLs.length);
@@ -100,6 +100,7 @@ const crawlMulti = async (URLs, foundedURLs) => {
             i++;
             if (i % (1000) === 0 || i === URLs.length) {
                 console.log(`level ${deep}: founded ${result.length} out link, ${i}/${URLs.length}`);
+                console.timeLog("level" + deep);
                 await updateDataToCSV();
             }
         }

@@ -1,8 +1,8 @@
 const utils = require("./utils");
 const db = require("./sqlite3");
 const request = require('request');
-const BASE_URL = "https://iprice.my/";
-const START_URL = "https://iprice.my";
+const BASE_URL = "https://iprice-my.iprice.mx/";
+const START_URL = "https://iprice-my.iprice.mx";
 const QUEUE = 50;
 let deep = 1;
 let crawledURLs = [];
@@ -28,9 +28,9 @@ const continueMain = async () => {
     }
 };
 const warmUpData = async () => {
-    const previousFoundedURLs = await utils.getDataFromCSV("data/temp_founded.csv", ',');
-    const previousCrawlingURLs = await utils.getArrDataFromCSV("data/temp_crawling_status.csv", ',');
-    visitedURL = require("./data/visitedURL.json");
+    const previousFoundedURLs = await utils.getDataFromCSV("data-old/temp_founded.csv", ',');
+    const previousCrawlingURLs = await utils.getArrDataFromCSV("data-old/temp_crawling_status.csv", ',');
+    visitedURL = require("./data-old/visitedURL.json");
     let crawlingURLs = [];
     console.log(previousFoundedURLs.length);
     previousFoundedURLs.map((item) => {
@@ -89,8 +89,8 @@ const crawlMulti = async (URLs, foundedURLs) => {
     let result = foundedURLs || [];
     let crawlTasks = [];
     let i = 0;
-    await utils.removeContent("data/temp_crawling_status.csv");
-    await utils.removeContent("data/temp_founded.csv");
+    await utils.removeContent("data-old/temp_crawling_status.csv");
+    await utils.removeContent("data-old/temp_founded.csv");
     await updateCrawlStatus(URLs, 'crawling');
     const addConvertTask = utils.createTasks(crawlTasks);
     URLs.map(url => addConvertTask(async () => {
@@ -125,15 +125,15 @@ const updateCrawlStatus = async (URLs, status) => {
     URLs.map(url => {
         crawlStatusUrls.push([url, status, deep]);
     });
-    await utils.updateCSVFile("data/temp_crawling_status.csv", crawlStatusUrls);
+    await utils.updateCSVFile("data-old/temp_crawling_status.csv", crawlStatusUrls);
 
 };
 const updateDataToCSV = async () => {
     await updateCrawlStatus(crawledURLs, 'crawled');
-    await utils.updateCSVFile("data/content.csv", crawledURLs);
-    await utils.exportJsonFile("data/visitedURL.json", visitedURL);
-    await utils.updateCSVFile("data/temp_founded.csv", foundedURLs);
-    await utils.updateCSVFile("data/out_link.csv", outLinkURLs);
+    await utils.updateCSVFile("data-old/content.csv", crawledURLs);
+    await utils.exportJsonFile("data-old/visitedURL.json", visitedURL);
+    await utils.updateCSVFile("data-old/temp_founded.csv", foundedURLs);
+    await utils.updateCSVFile("data-old/out_link.csv", outLinkURLs);
     crawledURLs = [];
     outLinkURLs = [];
     foundedURLs = [];
