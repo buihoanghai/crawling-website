@@ -157,18 +157,28 @@ String.prototype.replaceAll = function (search, replacement) {
     return target.replace(new RegExp(search, 'g'), replacement);
 };
 
-const executeAsync = tasks => {
+const executeAsync = (tasks, timeDelay) => {
     // const timeStart = "timeStart-" + (+new Date());
     // console.time(timeStart);
     return new Promise(resolve => {
         let promises = [];
-        tasks.map(task => {
-            promises.push(task());
+
+        tasks.map((task, i) => {
+            promises.push(waiting(task, i * timeDelay));
         });
         Promise.all(promises).then(() => {
             // console.timeEnd(timeStart);
             resolve();
         });
+    });
+};
+const waiting = (fn, time) => {
+    // console.log("setTimeout", time);
+    return new Promise(resolve => {
+        setTimeout(async () => {
+            await fn();
+            resolve();
+        }, time);
     });
 };
 
@@ -177,9 +187,10 @@ const createTasks = tasks => task => {
 };
 const executeTasks = async (tasks, opt) => {
     const thread = opt.thread || 10;
+    const timeDelay = opt.timeDelay || 10;
     let currentTasks = tasks.splice(0, thread);
     while (currentTasks.length) {
-        await executeAsync(currentTasks);
+        await executeAsync(currentTasks, timeDelay);
         currentTasks = tasks.splice(0, thread);
     }
 };
