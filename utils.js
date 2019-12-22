@@ -164,7 +164,8 @@ const executeAsync = (tasks, timeDelay) => {
         let promises = [];
 
         tasks.map((task, i) => {
-            promises.push(waiting(task, i * timeDelay));
+            promises.push(task());
+            // promises.push(waiting(task, i * timeDelay));
         });
         Promise.all(promises).then(() => {
             // console.timeEnd(timeStart);
@@ -187,7 +188,7 @@ const createTasks = tasks => task => {
 };
 const executeTasks = async (tasks, opt) => {
     const thread = opt.thread || 10;
-    const timeDelay = opt.timeDelay || 10;
+    const timeDelay = opt.timeDelay || 20;
     let currentTasks = tasks.splice(0, thread);
     while (currentTasks.length) {
         await executeAsync(currentTasks, timeDelay);
