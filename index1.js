@@ -96,12 +96,12 @@ const crawlMulti = async (URLs, foundedURLs) => {
     URLs.map(url => addConvertTask(async () => {
         if (url.length > 5) {
             const urls = await crawlSingle(url, deep);
-            result = [...result, ...urls];
             i++;
             if (i % (1000) === 0 || i === URLs.length) {
                 console.log(`level ${deep}: founded ${result.length} out link, ${i}/${URLs.length}`);
                 await updateDataToCSV();
             }
+            result = [...result, ...urls];
         }
     }));
     await utils.executeTasks(crawlTasks, {thread: QUEUE});
@@ -203,5 +203,5 @@ const crawlSingle = (url, deep) => {
     });
 };
 
-// main();
-continueMain();
+main();
+// continueMain();
