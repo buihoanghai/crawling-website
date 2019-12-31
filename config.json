@@ -1,5 +1,7 @@
 {
+  "firstTime": false,
   "base_url": "https://iprice.my/",
+  "queue": 20,
   "start_url": "https://iprice.my",
   "sql_out": "database.db",
   "plp_data": "plp_data.csv",
@@ -7,5 +9,14 @@
   "out_link": "data/out_link.csv",
   "temp_crawling_status": "data/temp_crawling_status.csv",
   "temp_founded": "data/temp_founded.csv",
-  "visitedURL": "data/visitedURL.json"
+  "visitedURL": "./data/visitedURL.json",
+  "ignore_url": [
+    "/r/",
+    "http://",
+    "/insights/",
+    "?",
+    "iema",
+    "{{",
+    "#"
+  ]
 }

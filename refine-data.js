@@ -1,5 +1,5 @@
 const utils = require("./utils");
-const config = require('./config-old.json');
+const config = require('./config.json');
 let outLinkData = {};
 const main = async () => {
     const contentData = await utils.getArrDataFromCSV(config.content, ',');

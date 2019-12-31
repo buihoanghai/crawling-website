@@ -1,16 +1,27 @@
 const utils = require("./utils");
-const db = require("./sqlite3");
+const config = require("./config");
 const request = require('request');
-const BASE_URL = "https://www.dailytask.co/";
-const START_URL = "https://www.dailytask.co";
-const QUEUE = 20;
+const BASE_URL = config.base_url;
+const START_URL = config.start_url;
+const QUEUE = config.queue;
+const IGNORE_URL = config.ignore_url;
+
+
 let deep = 1;
 let crawledURLs = [];
 let outLinkURLs = [];
 let foundedURLs = [];
-
 let visitedURL = {};
-const continueMain = async () => {
+let firstTime = false;
+
+// print process.argv
+process.argv.forEach(function (val, index, array) {
+    console.log(index + ': ' + val);
+    if(val==="first"){
+        firstTime = true;
+    }
+});
+const continueCrawling = async () => {
     let URLs = await warmUpData();
     if (URLs.length === 0) {
         if (foundedURLs.length > 0) {
@@ -22,15 +33,12 @@ const continueMain = async () => {
         URLs = await crawlMulti(URLs, foundedURLs);
         console.timeEnd("level" + deep);
         deep++;
-        // if (deep === 12)
-        //     return;
-
     }
 };
 const warmUpData = async () => {
-    const previousFoundedURLs = await utils.getDataFromCSV("data/temp_founded.csv", ',');
-    const previousCrawlingURLs = await utils.getArrDataFromCSV("data/temp_crawling_status.csv", ',');
-    visitedURL = require("./data/visitedURL.json");
+    const previousFoundedURLs = await utils.getDataFromCSV(config.temp_founded, ',');
+    const previousCrawlingURLs = await utils.getArrDataFromCSV(config.temp_crawling_status, ',');
+    visitedURL = require(config.visitedURL);
     let crawlingURLs = [];
     console.log(previousFoundedURLs.length);
     previousFoundedURLs.map((item) => {
@@ -51,8 +59,7 @@ const warmUpData = async () => {
     return crawlingURLs;
 
 };
-
-const main = async () => {
+const crawling =  async () => {
     let URLs = [START_URL];
     while (URLs.length) {
         console.time("level" + deep);
@@ -64,16 +71,15 @@ const main = async () => {
 
     }
 };
+const main = async () => {
+   if(firstTime){
+       await  crawling();
+   }
+   else {
+       await continueCrawling();
+   }
+};
 
-const IGNORE_URL = [
-    "/r/",
-    "http://",
-    "/insights/",
-    "?",
-    "iema",
-    "{{",
-    "#"
-];
 
 const removeInvalidURL = (arr) => {
     let result = arr.filter((v, i) => {
@@ -88,8 +94,8 @@ const crawlMulti = async (URLs, foundedURLs) => {
     let result = foundedURLs || [];
     let crawlTasks = [];
     let i = 0;
-    await utils.removeContent("data/temp_crawling_status.csv");
-    await utils.removeContent("data/temp_founded.csv");
+    await utils.removeContent(config.temp_crawling_status);
+    await utils.removeContent(config.temp_founded);
     await updateCrawlStatus(URLs, 'crawling');
     const addConvertTask = utils.createTasks(crawlTasks);
     URLs.map(url => addConvertTask(async () => {
@@ -124,15 +130,15 @@ const updateCrawlStatus = async (URLs, status) => {
     URLs.map(url => {
         crawlStatusUrls.push([url, status, deep]);
     });
-    await utils.updateCSVFile("data/temp_crawling_status.csv", crawlStatusUrls);
+    await utils.updateCSVFile(config.temp_crawling_status, crawlStatusUrls);
 
 };
 const updateDataToCSV = async () => {
     await updateCrawlStatus(crawledURLs, 'crawled');
-    await utils.updateCSVFile("data/content.csv", crawledURLs);
-    await utils.exportJsonFile("data/visitedURL.json", visitedURL);
-    await utils.updateCSVFile("data/temp_founded.csv", foundedURLs);
-    await utils.updateCSVFile("data/out_link.csv", outLinkURLs);
+    await utils.updateCSVFile(config.content, crawledURLs);
+    await utils.exportJsonFile(config.visitedURL, visitedURL);
+    await utils.updateCSVFile(config.temp_founded, foundedURLs);
+    await utils.updateCSVFile(config.out_link, outLinkURLs);
     crawledURLs = [];
     outLinkURLs = [];
     foundedURLs = [];
@@ -203,5 +209,5 @@ const crawlSingle = (url, deep) => {
     });
 };
 
-// main();
-continueMain();
+main();
+// continueMain();
