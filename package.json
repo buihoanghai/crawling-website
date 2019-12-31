@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/buihoanghai/crawling-website#readme",
   "dependencies": {
+    "event-stream": "^4.0.1",
     "globule": "^1.2.1",
     "lodash": "^4.17.13",
     "puppeteer": "^1.6.2",

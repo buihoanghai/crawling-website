@@ -1,4 +1,5 @@
 const fs = require('fs');
+const es = require('event-stream');
 
 function CSVToArray(strData, strDelimiter) {
     // Check to see if the delimiter is defined. If not,
@@ -86,7 +87,10 @@ function CSVToArray(strData, strDelimiter) {
 function getArrDataFromCSV(path, strDelimiter) {
     let defered = new Promise(resolve => {
         fs.readFile(path, 'utf8', function (err, data) {
-            console.log(data.length);
+            if (err) {
+                console.log(err);
+            }
+            console.log(path, data.length);
             let arr = CSVToArray(data, strDelimiter);
             resolve(arr);
         });
@@ -205,6 +209,25 @@ const getYYYYMMDD = () => {
     return `${year}-${month}-${day}`;
 };
 
+async function saveCSVFile(file, data) {
+    return new Promise(resolve => {
+        let lineArray = [];
+        data.forEach(function (infoArray, index) {
+            let line = infoArray.join("\,");
+            lineArray.push(line);
+        });
+        let csvContent = lineArray.join("\n") + "\n";
+        fs.writeFile(file, csvContent, 'utf8', function (err) {
+            if (err) {
+                console.log('Some error occurred - file either not saved or corrupted file saved.');
+            } else {
+                // console.log(file, 'It\'s updated!');
+            }
+            resolve();
+        });
+    });
+}
+
 async function updateCSVFile(file, data) {
     return new Promise(resolve => {
         let lineArray = [];
@@ -256,6 +279,40 @@ const removeItem = (array, item) => {
     }
 };
 
+const getArrDataFromLargeCSV =(path, callback)=> {
+    let defered = new Promise(resolve => {
+        let arrData = [];
+        let lineN = 0;
+        let tempStr = "";
+        console.log("Start file", path);
+        var s = fs.createReadStream(path)
+            .pipe(es.split())
+            .pipe(es.mapSync(function (line) {
+                    lineN++;
+                    tempStr += "\n" + line;
+                    if (lineN % 250502 === 0) {
+                        // if (lineN  === 2) {
+                        s.pause();
+                        console.log(lineN);
+                        let arr = CSVToArray(tempStr);
+                        tempStr = "";
+                        callback(arr, path, s);
+                        arrData = [];
+                    }
+
+                })
+                    .on('error', function (err) {
+                        console.log('Error while reading file.', err);
+                    })
+                    .on('end', function () {
+                        console.log('Read entire file.', lineN);
+                        resolve(lineN);
+                    })
+            );
+    });
+    return defered;
+}
+
 const revealed = {
     getYYYYMMDD,
     removeItem,
@@ -271,7 +328,9 @@ const revealed = {
     removeContent,
     exportJsonFile,
     updateCSVFile,
+    saveCSVFile,
     getArrDataFromCSV,
+    getArrDataFromLargeCSV,
 };
 
 module.exports = revealed;

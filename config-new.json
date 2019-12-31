@@ -1,0 +1,11 @@
+{
+  "base_url": "https://www.dailytask.co/",
+  "start_url": "https://www.dailytask.co",
+  "sql_out": "database.db",
+  "plp_data": "plp_data.csv",
+  "content": "data/content.csv",
+  "out_link": "data/out_link.csv",
+  "temp_crawling_status": "data/temp_crawling_status.csv",
+  "temp_founded": "data/temp_founded.csv",
+  "visitedURL": "data/visitedURL.json"
+}

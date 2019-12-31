@@ -3,7 +3,7 @@
     {
       "name": "crawling",
       "script": "./index-old.js",
-      "node_args": "--max_old_space_size=12072"
+      "node_args": "--max_old_space_size=16072"
     }
   ]
 }

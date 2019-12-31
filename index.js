@@ -1,9 +1,9 @@
 const utils = require("./utils");
 const db = require("./sqlite3");
 const request = require('request');
-const BASE_URL = "https://iprice.my/";
-const START_URL = "https://iprice.my";
-const QUEUE = 50;
+const BASE_URL = "https://www.dailytask.co/";
+const START_URL = "https://www.dailytask.co";
+const QUEUE = 20;
 let deep = 1;
 let crawledURLs = [];
 let outLinkURLs = [];
@@ -51,7 +51,6 @@ const warmUpData = async () => {
     return crawlingURLs;
 
 };
-
 
 const main = async () => {
     let URLs = [START_URL];
