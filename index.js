@@ -73,9 +73,11 @@ const crawling =  async () => {
 };
 const main = async () => {
    if(firstTime){
+       console.log("first Time crawling");
        await  crawling();
    }
    else {
+       console.log("not first Time crawling");
        await continueCrawling();
    }
 };
@@ -200,7 +202,8 @@ const crawlSingle = (url, deep) => {
             if (!error && response && response.statusCode === 200) {
                 URLs = getURLs(body);
             } else {
-                // console.log("Cannot crawl", url);
+                console.log("Cannot crawl", url);
+                console.log(error);
             }
             updateCrawlData(url, response.statusCode, deep, took, URLs);
             resolve(URLs);

@@ -1,8 +1,8 @@
 {
   "firstTime": false,
-  "base_url": "https://iprice.my/",
+  "base_url": "https://ifarmer.vn/",
   "queue": 20,
-  "start_url": "https://iprice.my",
+  "start_url": "https://ifarmer.vn",
   "sql_out": "database.db",
   "plp_data": "plp_data.csv",
   "content": "data/content.csv",
