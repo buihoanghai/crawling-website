@@ -4,7 +4,7 @@ const util = require("./src/util");
 let file = "out.csv";
 
 function main() {
-	crawling.goToURL("https://iprice.my/", saveData)
+	crawling.goToURL("https://iprice.hk/", saveData)
 }
 
 function saveData(url, data) {
