@@ -12,7 +12,7 @@ let crawledURLs = [];
 let outLinkURLs = [];
 let foundedURLs = [];
 let visitedURL = {};
-let firstTime = false;
+let firstTime = config.firstTime;
 
 // print process.argv
 process.argv.forEach(function (val, index, array) {

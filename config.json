@@ -1,8 +1,8 @@
 {
   "firstTime": false,
-  "base_url": "https://iprice.hk/",
+  "base_url": "https://master-iprice-my.iprice.mx/",
   "queue": 20,
-  "start_url": "https://iprice.hk",
+  "start_url": "https://master-iprice-my.iprice.mx",
   "sql_out": "database.db",
   "plp_data": "plp_data.csv",
   "content": "data/content.csv",
