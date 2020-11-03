@@ -16,12 +16,11 @@ let visitedURL = {};
 
 const main = async () => {
     const previousFoundedURLs = fs.existsSync(config.temp_founded);
-    console.log("previousFoundedURLs",previousFoundedURLs);
-    if(!previousFoundedURLs){
+    console.log("previousFoundedURLs", previousFoundedURLs);
+    if (!previousFoundedURLs) {
         console.log("first Time crawling");
-        await  crawling();
-    }
-    else {
+        await crawling();
+    } else {
         console.log("not first Time crawling");
         await continueCrawling();
     }
@@ -47,8 +46,8 @@ const warmUpData = async () => {
     const previousCrawlingURLs = await utils.getArrDataFromCSV(config.temp_crawling_status, ',');
     visitedURL = require(config.visitedURL);
     let crawlingURLs = [];
-    console.log("previousFoundedURLs",previousFoundedURLs.length);
-    console.log("previousCrawlingURLs",previousCrawlingURLs.length);
+    console.log("previousFoundedURLs", previousFoundedURLs.length);
+    console.log("previousCrawlingURLs", previousCrawlingURLs.length);
     previousFoundedURLs.map((item) => {
         foundedURLs.push([item]);
     });
@@ -67,7 +66,7 @@ const warmUpData = async () => {
     return crawlingURLs;
 
 };
-const crawling =  async () => {
+const crawling = async () => {
     let URLs = [START_URL];
     while (URLs.length) {
         console.time("level" + deep);
@@ -81,12 +80,13 @@ const crawling =  async () => {
 };
 
 const removeInvalidURL = (arr) => {
-    let result = arr.filter((v, i) => {
-        if (visitedURL[v]) { //Remove visited URL
-            return false;
+    let result = [];
+    for (let i = 0; i < arr.length; i++) {
+        let v = arr[i];
+        if (!visitedURL[v] && !result.includes(v)) {
+            result.push(arr[i]);
         }
-        return arr.indexOf(v) === i; // Remove duplicate URL
-    });
+    }
     return result;
 };
 const crawlMulti = async (URLs, foundedURLs) => {
