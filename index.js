@@ -1,4 +1,5 @@
 const utils = require("./utils");
+const fs = require("fs");
 const config = require("./config");
 const request = require('request');
 const BASE_URL = config.base_url;
@@ -12,15 +13,21 @@ let crawledURLs = [];
 let outLinkURLs = [];
 let foundedURLs = [];
 let visitedURL = {};
-let firstTime = config.firstTime;
 
-// print process.argv
-process.argv.forEach(function (val, index, array) {
-    console.log(index + ': ' + val);
-    if(val==="first"){
-        firstTime = true;
+const main = async () => {
+    const previousFoundedURLs = fs.existsSync(config.temp_founded);
+    console.log("previousFoundedURLs",previousFoundedURLs);
+    if(!previousFoundedURLs){
+        console.log("first Time crawling");
+        await  crawling();
     }
-});
+    else {
+        console.log("not first Time crawling");
+        await continueCrawling();
+    }
+};
+
+
 const continueCrawling = async () => {
     let URLs = await warmUpData();
     if (URLs.length === 0) {
@@ -40,7 +47,8 @@ const warmUpData = async () => {
     const previousCrawlingURLs = await utils.getArrDataFromCSV(config.temp_crawling_status, ',');
     visitedURL = require(config.visitedURL);
     let crawlingURLs = [];
-    console.log(previousFoundedURLs.length);
+    console.log("previousFoundedURLs",previousFoundedURLs.length);
+    console.log("previousCrawlingURLs",previousCrawlingURLs.length);
     previousFoundedURLs.map((item) => {
         foundedURLs.push([item]);
     });
@@ -54,8 +62,8 @@ const warmUpData = async () => {
             utils.removeItem(crawlingURLs, item[0]);
         }
     });
-    console.log("foundedURLs", foundedURLs.length);
-    console.log("crawlingURLs", crawlingURLs.length);
+    console.log("warmUpData foundedURLs", foundedURLs.length);
+    console.log("warmUpData crawlingURLs", crawlingURLs.length);
     return crawlingURLs;
 
 };
@@ -71,17 +79,6 @@ const crawling =  async () => {
 
     }
 };
-const main = async () => {
-   if(firstTime){
-       console.log("first Time crawling");
-       await  crawling();
-   }
-   else {
-       console.log("not first Time crawling");
-       await continueCrawling();
-   }
-};
-
 
 const removeInvalidURL = (arr) => {
     let result = arr.filter((v, i) => {
@@ -105,7 +102,7 @@ const crawlMulti = async (URLs, foundedURLs) => {
             const urls = await crawlSingle(url, deep);
             result = [...result, ...urls];
             i++;
-            if (i % (1000) === 0 || i === URLs.length) {
+            if (i % (50) === 0 || i === URLs.length) {
                 console.log(`level ${deep}: founded ${result.length} out link, ${i}/${URLs.length}`);
                 console.timeLog("level" + deep);
                 await updateDataToCSV();
@@ -167,6 +164,7 @@ const getValidURL = (url) => {
         return `${BASE_URL}${url}`;
     }
     if (url.indexOf(BASE_URL) === -1) {
+
         return false;
     }
 

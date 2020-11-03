@@ -1,5 +1,4 @@
 {
-  "firstTime": false,
   "base_url": "https://master-iprice-my.iprice.mx/",
   "queue": 20,
   "start_url": "https://master-iprice-my.iprice.mx",
