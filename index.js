@@ -63,6 +63,8 @@ const warmUpData = async () => {
     });
     console.log("warmUpData foundedURLs", foundedURLs.length);
     console.log("warmUpData crawlingURLs", crawlingURLs.length);
+    deep = deep ? deep : 100;
+    console.log("deep", deep);
     return crawlingURLs;
 
 };
