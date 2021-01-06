@@ -195,7 +195,7 @@ const crawlSingle = (url, deep) => {
     // console.log("crawl", url);
     const start = +new Date();
     return new Promise((resolve, reject) => {
-        request(url, function (error, response, body) {
+        request((url), function (error, response, body) {
             const finish = +new Date();
             const took = finish - start;
             let URLs = [];
@@ -204,6 +204,7 @@ const crawlSingle = (url, deep) => {
             } else {
                 console.log("Cannot crawl", url);
                 console.log(error);
+                response = {statusCode: 509};
             }
             updateCrawlData(url, response.statusCode, deep, took, URLs);
             resolve(URLs);
